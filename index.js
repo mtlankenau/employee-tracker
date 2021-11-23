@@ -43,7 +43,95 @@ const addDepartmentPrompt = () => {
       }
     }
   ])
-}
+};
+
+const addRolePrompt = () => {
+  return inquirer.prompt([
+    {
+      type: 'text',
+      name: 'newRoleName',
+      message: 'Enter the name of the new role.',
+      validate: nameInput => {
+        if (nameInput) {
+          return true
+        } else {
+          console.log('Please enter the new role name!')
+          return false;
+        }
+      }
+    },
+    {
+      type: 'number',
+      name: 'newRoleSalary',
+      message: 'Enter the salary of this new role.',
+      validate: salaryInput => {
+        if (salaryInput) {
+          return true
+        } else {
+          console.log('Please enter the salary for this particular role!')
+          return false;
+        }
+      }
+    },
+    {
+      type: 'number',
+      name: 'newRoleDepartment',
+      message: 'Enter the ID of the department that this new role is within',
+      validate: departmentInput => {
+        if (departmentInput) {
+          return true
+        } else {
+          console.log('Please enter the ID (number) of the department associated with this new role!')
+          return false;
+        }
+      }
+    }
+  ])
+};
+
+const addEmployeePrompt = () => {
+  return inquirer.prompt([
+    {
+      type: 'text',
+      name: 'newEmployeeFirstName',
+      message: 'Enter the first name of the new employee.',
+      validate: nameInput => {
+        if (nameInput) {
+          return true
+        } else {
+          console.log('Please enter the first name of the new employee!')
+          return false;
+        }
+      }
+    },
+    {
+      type: 'text',
+      name: 'newEmployeeLastName',
+      message: 'Enter the last name of the new employee.',
+      validate: nameInput => {
+        if (nameInput) {
+          return true
+        } else {
+          console.log('Please enter the last name of the new employee!')
+          return false;
+        }
+      }
+    },
+    {
+      type: 'number',
+      name: 'newEmployeeRole',
+      message: 'Enter the ID of the role of this new employee',
+      validate: roleInput => {
+        if (roleInput) {
+          return true
+        } else {
+          console.log('Please enter the ID (number) of the role associated with this new employee!')
+          return false;
+        }
+      }
+    }
+  ])
+};
 
 const handleChoice = () => {
   initialOptions()
@@ -56,7 +144,13 @@ const handleChoice = () => {
         viewEmployees();
       } else if (selection.choice === 'Add a department') {
         addDepartmentPrompt()
-          .then(selection => addNewDepartment(selection.newDepartment))
+          .then(selection => addNewDepartment(selection))
+      } else if (selection.choice === 'Add a role') {
+        addRolePrompt()
+          .then(selection => addNewRole(selection))
+      } else if (selection.choice === 'Add an employee') {
+        addEmployeePrompt()
+          .then(selection => addNewEmployee(selection))
       }
     })
 };
@@ -104,19 +198,53 @@ const viewEmployees = () => {
 
 const addNewDepartment = (department) => {
   const sql = `INSERT INTO department (name)
-              VALUES ('${department}')`;
+              VALUES ('${department.newDepartment}')`;
 
   db.promise().query(sql)
     .then( ([rows,fields]) => {
       console.log(
 `===========================================================
 
-The ${department} department has been added to the database!
+The ${department.newDepartment} department has been added to the database!
 
 ===========================================================`)
     })
     .catch(console.log)
     .then(handleChoice);
-}
+};
+
+const addNewRole = (role) => {
+  const sql = `INSERT INTO role (title, salary, department_id)
+              VALUES ('${role.newRoleName}', ${role.newRoleSalary}, ${role.newRoleDepartment})`;
+
+  db.promise().query(sql)
+    .then( ([rows,fields]) => {
+      console.log(
+`===========================================================
+
+The ${role.newRoleName} role has been added to the database!
+
+===========================================================`)
+    })
+    .catch(console.log)
+    .then(handleChoice);
+};
+
+const addNewEmployee = (employee) => {
+  const sql = `INSERT INTO employee (first_name, last_name, role_id)
+              VALUES ('${employee.newEmployeeFirstName}', '${employee.newEmployeeLastName}', ${employee.newEmployeeRole})`;
+
+  db.promise().query(sql)
+    .then( ([rows,fields]) => {
+      console.log(
+`===========================================================
+
+New employee (${employee.newEmployeeFirstName} ${employee.newEmployeeLastName}) has been added to the database!
+
+===========================================================`)
+    })
+    .catch(console.log)
+    .then(handleChoice);
+};
 
 handleChoice();
