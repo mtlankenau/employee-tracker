@@ -133,6 +133,37 @@ const addEmployeePrompt = () => {
   ])
 };
 
+const updateEmployeeRolePrompt = () => {
+  return inquirer.prompt([
+    {
+      type: 'number',
+      name: 'employeeIdChoice',
+      message: 'Please enter the ID of the employee whose role you would like to update',
+      validate: employeeIdInput => {
+        if (employeeIdInput) {
+          return true
+        } else {
+          console.log('Please enter the ID (number) of the employee whose role you would like to update!')
+          return false;
+        }
+      }
+    },
+    {
+      type: 'number',
+        name: 'roleIdChoice',
+        message: 'Enter the ID of the new role of this employee',
+        validate: roleInput => {
+          if (roleInput) {
+            return true
+          } else {
+            console.log('Please enter the ID (number) of the role associated with this new employee!')
+            return false;
+          }
+        }
+    }
+  ])
+};
+
 const handleChoice = () => {
   initialOptions()
     .then(selection => {
@@ -151,12 +182,15 @@ const handleChoice = () => {
       } else if (selection.choice === 'Add an employee') {
         addEmployeePrompt()
           .then(selection => addNewEmployee(selection))
+      } else if (selection.choice === 'Update an employee role') {
+        updateEmployeeRolePrompt()
+          .then(selection => updateEmployeeRole(selection))
       }
-    })
+    });
 };
 
 const viewDepartments = () => {
-  const sql = `SELECT * FROM department`;
+  const sql = `SELECT id, name AS department FROM department`;
 
   db.promise().query(sql)
     .then( ([rows,fields]) => {
@@ -181,7 +215,7 @@ const viewRoles = () => {
 };
 
 const viewEmployees = () => {
-  const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name, role.salary
+  const sql = `SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary
               FROM employee
               JOIN role
               ON employee.role_id = role.id
@@ -240,6 +274,24 @@ const addNewEmployee = (employee) => {
 `===========================================================
 
 New employee (${employee.newEmployeeFirstName} ${employee.newEmployeeLastName}) has been added to the database!
+
+===========================================================`)
+    })
+    .catch(console.log)
+    .then(handleChoice);
+};
+
+const updateEmployeeRole = (updatedRole) => {
+  const sql = `UPDATE employee
+              SET role_id = ${updatedRole.roleIdChoice}
+              WHERE employee.id = ${updatedRole.employeeIdChoice}`;
+  
+  db.promise().query(sql)
+    .then( ([rows,fields ]) => {
+      console.log(
+`===========================================================
+
+Employee Role Updated!
 
 ===========================================================`)
     })
