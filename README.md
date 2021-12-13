@@ -2,7 +2,7 @@
 [![License](https://img.shields.io/badge/License-ISC-red.svg)](https://opensource.org/licenses/ISC)
 
 ## Application Video Tutorial
-<a href="chrome-extension://mmeijimgabbpbgpdklnllpncmdofkcpn/app.html#/files/7b56a915-ce58-4222-y672-808cf51b868f">Click here to watch me walk you through my application!</a>
+<a href="https://watch.screencastify.com/v/KV7UrQCECCapKOvhb9oP">Click here to watch me walk you through my application!</a>
 
 ## Description
 Employee-Tracker is a command-line application that manages a company's employee database. It serves as a content management system (CMS) and utilizes Node.js, Inquirer, and MySQL.
